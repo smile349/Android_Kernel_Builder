@@ -1,4 +1,4 @@
-name: Build Kernel without KernelSU
+name: Build Android Kernel
 on:
 
   workflow_dispatch:
