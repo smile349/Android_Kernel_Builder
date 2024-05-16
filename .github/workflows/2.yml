@@ -17,7 +17,6 @@ jobs:
           ls -la kernel
 
       - name: Setup KernelSU
-        if: env.ENABLE_KERNELSU == 'true'
         run: |
           git clone --depth=1 -b ${{ env.KERNELSU_TAG }} https://github.com/Kernel-SU/KernelSU.git kernelsu
           cp -r kernelsu/drivers kernel/
