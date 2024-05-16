@@ -1,0 +1,39 @@
+name: Build KernelSU LKM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build KernelSU LKM by ${{ github.actor }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Kernel Source
+        run: |
+          git clone --depth=1 -b ${{ env.KERNEL_SOURCE_BRANCH }} ${{ env.KERNEL_SOURCE }} kernel
+
+      - name: Check Kernel Source Directory
+        run: |
+          ls -la kernel
+
+      - name: Setup KernelSU
+        if: env.ENABLE_KERNELSU == 'true'
+        run: |
+          git clone --depth=1 -b ${{ env.KERNELSU_TAG }} https://github.com/Kernel-SU/KernelSU.git kernelsu
+          cp -r kernelsu/drivers kernel/
+          # Add KernelSU driver to Makefile
+          echo "obj-$(CONFIG_KSU) += drivers/" >> kernel/drivers/Makefile
+
+      - name: Build KernelSU LKM
+        if: env.ENABLE_KERNELSU == 'true'
+        run: |
+          cd kernel
+          make modules_prepare
+          make M=drivers/kernelsu
+
+      - name: Upload Kernel Modules
+        if: env.ENABLE_KERNELSU == 'true'
+        uses: actions/upload-artifact@v2
+        with:
+          name: kernelsu_lkm
+          path: kernel/drivers/kernelsu/*.ko
