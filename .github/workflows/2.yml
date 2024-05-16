@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 -b ${{ env.KERNEL_SOURCE_BRANCH }} ${{ env.KERNEL_SOURCE }} kernel
+          git clone --depth=1 -b T https://github.com/smile349/android_kernel_T.git kernel
 
       - name: Check Kernel Source Directory
         run: |
