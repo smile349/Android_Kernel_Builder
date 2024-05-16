@@ -1,4 +1,4 @@
-name: Build Android Kernel with KernelSU
+name: Build Android Kernel lkm
 on:
   workflow_dispatch:
 
