@@ -253,6 +253,20 @@ jobs:
         else
             make -j$(nproc --all) CC=clang O=out ARCH=${{ env.ARCH }} ${{ env.CUSTOM_CMDS }} ${{ env.EXTRA_CMDS }} ${{ env.GCC_64 }} ${{ env.GCC_32 }}
         fi
+    - name: Build KernelSU LKM
+      if: env.ENABLE_KERNELSU == 'true'
+      run: |
+       cd kernel
+       make -C drivers/kernelsu
+
+    - name: Prepare artifacts
+      run: |
+        cd kernel
+        mkdir -p artifacts
+        if [ "${{ env.ENABLE_KERNELSU }}" = "true" ]; then
+          cp drivers/kernelsu/*.ko artifacts/
+        fi
+        cp arch/${{ env.ARCH }}/boot/${{ env.KERNEL_IMAGE_NAME }} artifacts/
 
     - name: Check a kernel output files
       run: |
