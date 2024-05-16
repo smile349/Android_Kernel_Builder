@@ -257,7 +257,8 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-       make -C KernelSU -j$(nproc) modules
+       make modules_prepare
+       make M=drivers/kernelsu
 
     - name: Prepare artifacts
       run: |
