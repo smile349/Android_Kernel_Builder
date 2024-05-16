@@ -256,12 +256,12 @@ jobs:
     - name: Build KernelSU LKM
       if: env.ENABLE_KERNELSU == 'true'
       run: |
-       cd kernel
+       cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
        make -C KernelSU -j$(nproc) modules
 
     - name: Prepare artifacts
       run: |
-        cd kernel
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         mkdir -p artifacts
         if [ "${{ env.ENABLE_KERNELSU }}" = "true" ]; then
           cp drivers/kernelsu/*.ko artifacts/
