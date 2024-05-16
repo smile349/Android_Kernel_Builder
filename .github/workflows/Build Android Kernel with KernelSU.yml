@@ -257,7 +257,7 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
        cd kernel
-       make -C drivers/kernelsu
+       make -C KernelSU -j$(nproc) modules
 
     - name: Prepare artifacts
       run: |
