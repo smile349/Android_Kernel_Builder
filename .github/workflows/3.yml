@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc
+          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64
 
       - name: Setup KernelSU
         run: |
@@ -37,31 +37,21 @@ jobs:
           fi
           git submodule update --init --recursive
 
-      - name: Configure Kernel
+      - name: Configure Kernel for ARM64
         run: |
           cd kernel
-          make defconfig
+          make ARCH=arm64 defconfig
           scripts/config --enable SECURITY
           scripts/config --enable SECURITY_SELINUX
           scripts/config --module SECURITY_SELINUX
-          make oldconfig && make prepare
+          make ARCH=arm64 oldconfig && make ARCH=arm64 prepare
 
-      - name: Build Kernel
-        run: |
-          cd kernel
-          make -j$(nproc)
-      
-      - name: Generate Module.symvers
-        run: |
-          cd kernel
-          make modules_prepare
-
-      - name: Build KernelSU LKM
+      - name: Build KernelSU LKM for ARM64
         run: |
           cd kernel
           KSU_GIT_VERSION=$(git -C drivers/kernelsu rev-parse HEAD)
           export KSU_GIT_VERSION
-          make M=drivers/kernelsu
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/kernelsu
 
       - name: Upload Kernel Modules
         uses: actions/upload-artifact@v2
