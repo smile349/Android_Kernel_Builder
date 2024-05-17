@@ -18,13 +18,12 @@ jobs:
 
       - name: Setup KernelSU
         run: |
-        
-          cp -r kernelsu/drivers kernel/
+
           # Add KernelSU driver to Makefile
           echo "obj-$(CONFIG_KSU) += drivers/" >> kernel/drivers/Makefile
 
       - name: Build KernelSU LKM
-        if: env.ENABLE_KERNELSU == 'true'
+    
         run: |
           cd kernel
           make modules_prepare
