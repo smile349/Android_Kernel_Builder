@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libelf-dev libssl-dev
+          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc
 
       - name: Setup KernelSU
         run: |
