@@ -36,10 +36,18 @@ jobs:
           fi
           git submodule update --init --recursive
 
+      - name: Configure Kernel
+        run: |
+          cd kernel
+          make defconfig
+          scripts/config --enable SECURITY
+          scripts/config --enable SECURITY_SELINUX
+          scripts/config --module SECURITY_SELINUX
+          make oldconfig && make prepare
+
       - name: Build KernelSU LKM
         run: |
           cd kernel
-          make oldconfig && make prepare
           make scripts
           make M=drivers/kernelsu
 
