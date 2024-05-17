@@ -1,0 +1,61 @@
+name: Build KernelSU LKM4.0
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build KernelSU LKM by ${{ github.actor }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64
+
+      - name: Clone Kernel Source
+        run: |
+          git clone --depth=1 -b T https://github.com/smile349/android_kernel_T.git kernel
+
+      - name: Check Kernel Source Directory
+        run: |
+          ls -la kernel
+
+      - name: Setup KernelSU
+        run: |
+          DRIVER_MAKEFILE=kernel/drivers/Makefile
+          DRIVER_KCONFIG=kernel/drivers/Kconfig
+          grep -q "kernelsu" "$DRIVER_MAKEFILE" || echo "obj-\$(CONFIG_KSU) += kernelsu/" >> "$DRIVER_MAKEFILE"
+          grep -q "kernelsu" "$DRIVER_KCONFIG" || sed -i "/endmenu/i\\source \"drivers/kernelsu/Kconfig\"" "$DRIVER_KCONFIG"
+
+      - name: Add KernelSU as a Git Submodule
+        run: |
+          cd kernel
+          if [ ! -d "drivers/kernelsu" ]; then
+            git submodule add https://github.com/tiann/KernelSU.git drivers/kernelsu
+          fi
+          git submodule update --init --recursive
+
+      - name: Configure Kernel for ARM64
+        run: |
+          cd kernel
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+          scripts/config --enable SECURITY
+          scripts/config --enable SECURITY_SELINUX
+          scripts/config --module SECURITY_SELINUX
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_prepare
+
+      - name: Build KernelSU LKM for ARM64
+        run: |
+          cd kernel
+          export KSU_GIT_VERSION=$(git -C drivers/kernelsu rev-parse HEAD)
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/kernelsu
+
+      - name: Upload Kernel Modules
+        uses: actions/upload-artifact@v2
+        with:
+          name: kernelsu_lkm
+          path: kernel/drivers/kernelsu/*.ko
