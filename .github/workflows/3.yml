@@ -51,8 +51,7 @@ jobs:
       - name: Build KernelSU LKM for ARM64
         run: |
           cd kernel
-          KSU_GIT_VERSION=$(git -C drivers/kernelsu rev-parse HEAD)
-          export KSU_GIT_VERSION
+          export KSU_GIT_VERSION=$(git -C drivers/kernelsu rev-parse HEAD)
           make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/kernelsu
 
       - name: Upload Kernel Modules
