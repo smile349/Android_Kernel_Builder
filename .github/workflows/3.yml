@@ -21,7 +21,8 @@ jobs:
 
       - name: Clone KernelSU Source
         run: |
-          git submodule add https://github.com/tiann/KernelSU.git kernelsu
+          cd kernel
+          git submodule add https://github.com/tiann/KernelSU.git
           git submodule update --init --recursive
 
 
@@ -41,7 +42,7 @@ jobs:
         run: |
           cd kernel
           if [ ! -d "drivers/kernelsu" ]; then
-            ln -sf kernelsu/kernel kernel/drivers/kernelsu
+            ln -sf kernel/KernelSU/kernel kernel/drivers/kernelsu
           fi
 
       - name: Configure Kernel for ARM64
