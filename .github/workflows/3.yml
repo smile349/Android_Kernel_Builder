@@ -34,7 +34,7 @@ jobs:
           cd kernel
           if [ ! -d "drivers/kernelsu" ]; then
             mkdir -p drivers/kernelsu
-            ln -sf ../../KernelSU/kernel drivers/kernelsu
+            cp -r KernelSU/kernel/* drivers/kernelsu/
           fi
 
       - name: Setup KernelSU
