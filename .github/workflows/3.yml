@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64
+
       - name: Clone Kernel Source
         run: |
           git clone --depth=1 -b T https://github.com/smile349/android_kernel_T.git kernel
@@ -16,11 +21,6 @@ jobs:
       - name: Check Kernel Source Directory
         run: |
           ls -la kernel
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64
 
       - name: Setup KernelSU
         run: |
@@ -40,11 +40,11 @@ jobs:
       - name: Configure Kernel for ARM64
         run: |
           cd kernel
-          make ARCH=arm64 defconfig
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
           scripts/config --enable SECURITY
           scripts/config --enable SECURITY_SELINUX
           scripts/config --module SECURITY_SELINUX
-          make ARCH=arm64 oldconfig && make ARCH=arm64 prepare
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig && make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
 
       - name: Build KernelSU LKM for ARM64
         run: |
