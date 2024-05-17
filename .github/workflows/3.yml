@@ -12,11 +12,11 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64
+          sudo apt-get install -y libelf-dev libssl-dev gcc make bison flex bc crossbuild-essential-arm64 rsync
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 -b miui-t https://github.com/tanz3/kernel_xiaomi_sm8350-miui kernel
+          git clone --depth=1 -b r https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin kernel
 
       - name: Clone KernelSU Source
         run: |
@@ -29,15 +29,13 @@ jobs:
           ls -la kernel
           ls -la kernel/KernelSU
 
-      - name: Add KernelSU as a Git Submodule
+      - name: Setup KernelSU Directory
         run: |
           cd kernel
-          if [ ! -d "drivers/kernelsu" ]; then
-            mkdir -p drivers/kernelsu
-            cp -r KernelSU/kernel/* drivers/kernelsu/
-          fi
+          mkdir -p drivers/kernelsu
+          rsync -a --delete KernelSU/kernel/ drivers/kernelsu/
 
-      - name: Setup KernelSU
+      - name: Setup KernelSU Configuration
         run: |
           DRIVER_MAKEFILE=kernel/drivers/Makefile
           DRIVER_KCONFIG=kernel/drivers/Kconfig
