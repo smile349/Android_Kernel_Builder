@@ -1,4 +1,4 @@
-name: Build KernelSU LKM3
+name: Build KernelSU LKM
 
 on:
   workflow_dispatch:
@@ -31,7 +31,9 @@ jobs:
       - name: Add KernelSU as a Git Submodule
         run: |
           cd kernel
-          git submodule add https://github.com/tiann/KernelSU.git drivers/kernelsu
+          if [ ! -d "drivers/kernelsu" ]; then
+            git submodule add https://github.com/tiann/KernelSU.git drivers/kernelsu
+          fi
           git submodule update --init --recursive
 
       - name: Build KernelSU LKM
