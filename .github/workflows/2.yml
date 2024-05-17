@@ -26,7 +26,7 @@ jobs:
     
         run: |
           cd kernel
-          make modules_prepare
+        
           make M=drivers/kernelsu
 
       - name: Upload Kernel Modules
