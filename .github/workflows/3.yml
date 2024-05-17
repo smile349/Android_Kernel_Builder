@@ -1,0 +1,48 @@
+name: Build KernelSU LKM3
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build KernelSU LKM by ${{ github.actor }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Kernel Source
+        run: |
+          git clone --depth=1 -b T https://github.com/smile349/android_kernel_T.git kernel
+
+      - name: Check Kernel Source Directory
+        run: |
+          ls -la kernel
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libelf-dev
+
+      - name: Setup KernelSU
+        run: |
+          DRIVER_MAKEFILE=kernel/drivers/Makefile
+          DRIVER_KCONFIG=kernel/drivers/Kconfig
+          grep -q "kernelsu" "$DRIVER_MAKEFILE" || echo "obj-\$(CONFIG_KSU) += kernelsu/" >> "$DRIVER_MAKEFILE"
+          grep -q "kernelsu" "$DRIVER_KCONFIG" || sed -i "/endmenu/i\\source \"drivers/kernelsu/Kconfig\"" "$DRIVER_KCONFIG"
+
+      - name: Add KernelSU as a Git Submodule
+        run: |
+          cd kernel
+          git submodule add https://github.com/tiann/KernelSU.git drivers/kernelsu
+          git submodule update --init --recursive
+
+      - name: Build KernelSU LKM
+        run: |
+          cd kernel
+          make oldconfig && make prepare
+          make scripts
+          make M=drivers/kernelsu
+
+      - name: Upload Kernel Modules
+        uses: actions/upload-artifact@v2
+        with:
+          name: kernelsu_lkm
+          path: kernel/drivers/kernelsu/*.ko
