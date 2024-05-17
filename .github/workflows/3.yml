@@ -16,7 +16,7 @@ jobs:
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 -b T https://github.com/smile349/android_kernel_T.git kernel
+          git clone --depth=1 -b r https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin kernel
 
       - name: Check Kernel Source Directory
         run: |
