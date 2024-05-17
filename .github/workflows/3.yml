@@ -16,11 +16,19 @@ jobs:
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 -b r https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin kernel
+          git clone --depth=1 -b r https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin /kernel
+
+
+      - name: Clone KernelSU Source
+        run: |
+          git submodule add https://github.com/tiann/KernelSU.git /kernelsu
+          git submodule update --init --recursive
+
 
       - name: Check Kernel Source Directory
         run: |
           ls -la kernel
+          ls -la kernelsu
 
       - name: Setup KernelSU
         run: |
@@ -33,9 +41,8 @@ jobs:
         run: |
           cd kernel
           if [ ! -d "drivers/kernelsu" ]; then
-            git submodule add https://github.com/tiann/KernelSU.git drivers/kernelsu
+            ln -sf /kernelsu/KernelSU/kernel /kernel/drivers/kernelsu
           fi
-          git submodule update --init --recursive
 
       - name: Configure Kernel for ARM64
         run: |
