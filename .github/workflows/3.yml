@@ -29,7 +29,7 @@ jobs:
       - name: Check Kernel Source Directory
         run: |
           ls -la kernel
-          ls -la kernelsu
+          ls -la kernel/KernelSU
 
       - name: Setup KernelSU
         run: |
