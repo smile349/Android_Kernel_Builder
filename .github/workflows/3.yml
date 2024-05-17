@@ -44,7 +44,9 @@ jobs:
           scripts/config --enable SECURITY
           scripts/config --enable SECURITY_SELINUX
           scripts/config --module SECURITY_SELINUX
-          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig && make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_prepare
 
       - name: Build KernelSU LKM for ARM64
         run: |
