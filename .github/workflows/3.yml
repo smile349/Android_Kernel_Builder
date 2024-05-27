@@ -16,7 +16,7 @@ jobs:
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 -b miui-t https://github.com/tanz3/kernel_xiaomi_sm8350-miui kernel
+          git clone --depth=1 -b master https://github.com/HK416AAA/HUAWEI_Kirin990-5G_Kernel kernel
 
       - name: Clone KernelSU Source
         run: |
