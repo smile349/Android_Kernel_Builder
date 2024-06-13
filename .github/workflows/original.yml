@@ -189,7 +189,21 @@ jobs:
             echo "FORMAT_MKBOOTING=$(echo `tools/unpack_bootimg.py --boot_img=boot-source.img --format mkbootimg`)" >> $GITHUB_ENV
             echo "HAVE_SOURCE_BOOT_IMAGE=true" >> $GITHUB_ENV
         fi
-  
+
+    - name: Add erofs
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        git clone https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        git am ../erofs/patches/*.patch
+
+    - name: Configure Kernel with ERoFS
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        make menuconfig <<EOF
+        CONFIG_EROFS_FS=y
+        EOF
+
     - name: Setup KernelSU
       if: env.ENABLE_KERNELSU == 'true'
       run: |
