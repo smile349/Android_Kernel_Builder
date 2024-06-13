@@ -193,10 +193,11 @@ jobs:
     - name: Add erofs
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
+        git clone https://kernel.googlesource.com/pub/scm/linux/kernel/git/xiang/erofs.git
+        cd erofs
+        git checkout refs/tags/v4.14
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         git am ../erofs/patches/*.patch
-
     - name: Configure Kernel with ERoFS
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
