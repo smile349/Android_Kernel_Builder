@@ -195,20 +195,21 @@ jobs:
         git config --global user.email "smile343@qq.com"
         git config --global user.name "smile"        
 
-    - name: Add erofs
+    - name: Clone and apply erofs patches
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://kernel.googlesource.com/pub/scm/linux/kernel/git/xiang/erofs.git
         cd erofs
         git checkout refs/tags/v4.14
+        # Apply the patches directly from the erofs repository
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        git am ../erofs/patches/*.patch
+        git am ../erofs/*
+
     - name: Configure Kernel with ERoFS
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        make menuconfig <<EOF
-        CONFIG_EROFS_FS=y
-        EOF
+        echo "CONFIG_EROFS_FS=y" >> .config
+        yes "" | make oldconfig
 
     - name: Setup KernelSU
       if: env.ENABLE_KERNELSU == 'true'
