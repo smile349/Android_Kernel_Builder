@@ -205,6 +205,8 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         curl -LSs "https://raw.githubusercontent.com/smile349/KernelSU/main/kernel/setup.sh" -o setup.sh
         sudo bash setup.sh main
+        curl -LSs "https://raw.githubusercontent.com/undefined-ux/kernel_xiaomi_nabu_ksu/udc/patchKsuMakefile.py" -o patchKsuMakefile.py
+        sudo python3 patchKsuMakefile.py 
         KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "UPLOADNAME=-KernelSU_$KSU_VERSION" >> $GITHUB_ENV
 
